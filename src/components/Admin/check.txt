@@ -1,0 +1,483 @@
+{!arr.length ? (
+                            <div
+                                style={{
+                                    position: "absolute",
+                                    left: "50%",
+                                    top: "100%",
+                                    transform: "translate(-50%, -50%)"
+                                }}
+                            >
+                                {arr.length == 0 ? 'Not available any Blog ' : <img src={loading} />}
+                            </div>
+                        ) : (
+                            
+                            
+                                <div className='view-content'>
+                                    {/* {this.renderPosts()}                                           
+                                </div> */}
+                                {
+    _.map(this.state.arr, (post, key) => {
+        return (
+        //     <div key={key}>
+        //     <h2>{post.title}</h2>
+        //     <p>{renderHTML(post.body)}</p>
+        //   </div>
+
+         
+
+       < Col md='6' sm="12" style={{ marginBottom: '30px' }} key={i} id={i} >
+            <Card key={i} id={e.newPostKey} className='bor'>
+            <Link to={`/AddblogsDetails/${e.newPostKey}`} class="smallLinkButton">
+                    <CardImg top src={e.downloadURL || "https://via.placeholder.com/400x300"}
+                        alt="Uploaded Images" height="200"
+                        width="300" />
+                    <Card body>
+                        <div className='filterbox' style={{textDecoration:'none', color:'rgb(118, 102, 223)'}}>
+                            <h3> {e.heading}</h3>
+                        </div>
+                        <div className='filterbox' >
+                            <CardText className="custom-link"><ReadMoreReact text={e.paragraph1}
+                                min={50}
+                                ideal={50}
+                                max={100}
+                                readMoreText="read more" /></CardText>
+                        </div>
+                        
+                    </Card>
+                </Link>
+                <div style={{display: 'flex', justifyContent: 'flex-end', margin: 5}}>
+                <Link to={`/Editblog/${e.newPostKey}`} class="smallLinkButton" style={{color: 'white', marginRight: 5}}>   <Button   color="primary" size="md" outline>Edit</Button></Link>
+                <Button color="danger" size="md" outline   onClick={() => this.delete(e.newPostKey)} >Delete</Button>
+                        </div>
+            </Card>
+        </Col>
+       
+        )
+    })
+}
+</div>)}
+
+import React, { Component } from 'react'
+import _ from "lodash";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import renderHTML from "react-render-html";
+
+import firebase from './../../config/firebase'
+import { Icon } from 'react-icons-kit'
+import { fileTextO } from 'react-icons-kit/fa/fileTextO'
+import { AvForm, AvField, } from 'availity-reactstrap-validation';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom'
+import { Alert , FormGroup, Container, CardTitle,FormText, Button, Input, Row, Col, Card, CardImg, CardText, CardBody, Modal, ModalHeader, ModalBody, ModalFooter, CustomInput, Label } from 'reactstrap';
+import Navigations from './../../config/navbarAdmin'
+import loading from '../../images/24.gif';
+import Sidebar from './../../config/Sidebar'
+import CodeMirror from 'codemirror';
+import Firepad from 'firepad';
+import '../../Sidebar.css'
+import '../../App.css'
+import ReadMoreReact from 'read-more-react';
+
+export default class AddBLogs extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {body: '',
+            heading: "",
+            paragraph1: "",
+           paragraph2: "",
+           paragraph3: "",
+           paragraph4: "",
+           paragraph5: "",
+           paragraph6: "",
+            arr: {},
+            image: null,
+            url: "",
+            progress: 0
+
+        };
+        this.onHandleChange = this.onHandleChange.bind(this);
+        // this.onHandleSubmit = this.onHandleSubmit.bind(this);
+    
+    }
+
+      
+
+
+
+    onHandleChange(e) {
+        this.setState({ body: e });
+        console.log(this.state.body);
+      }
+
+    handleChange = e => {
+        if (e.target.files[0]) {
+            const image = e.target.files[0];
+            this.setState(() => ({ image }));
+        }
+    };
+
+  async  componentDidMount() {
+    await   this.getBlogData()
+    //  await   this.firebasefirePad()
+
+    }
+
+    getBlogData = () =>{
+        this.firebaseRef = firebase.database().ref("BlogData");
+        this.firebaseRef.on('value', (snapshot) => {
+            let message = snapshot.val();
+            console.log(message)
+            var newArr = []
+            for (let word in message) {
+                console.log(message[word].pushKey);
+                newArr.push({
+                    createAt: message[word].createAt,
+                    newPostKey: message[word].newPostKey,
+                    heading: message[word].heading,
+                    paragraph1: message[word].paragraph1,
+                    paragraph2: message[word].paragraph2,
+                    paragraph3: message[word].paragraph3,
+                    paragraph4: message[word].paragraph4,
+                    paragraph5: message[word].paragraph5,
+                    paragraph6: message[word].paragraph6,                    
+                    downloadURL: message[word].downloadURL,
+                    body: message[word].body
+                });
+            }
+            // console.log(message);
+            // // arr.push(message)
+            this.setState({ arr: newArr });
+        }
+        )
+    }
+
+
+    handleChangeHeading(event) {
+        this.setState({ heading: event.target.value })
+    }
+    handleChangeParagraph1(event) {
+        this.setState({ paragraph1: event.target.value })
+    }
+    handleChangeParagraph2(event) {
+        this.setState({ paragraph2: event.target.value })
+    }
+    handleChangeParagraph3(event) {
+        this.setState({ paragraph3: event.target.value })
+    }
+    handleChangeParagraph4(event) {
+        this.setState({ paragraph4: event.target.value })
+    }
+    handleChangeParagraph5(event) {
+        this.setState({ paragraph5: event.target.value })
+    }
+    handleChangeParagraph6(event) {
+        this.setState({ paragraph6: event.target.value })
+    }
+
+    submit = () => {
+        const { heading, paragraph1,
+            paragraph2,
+            paragraph3,
+            paragraph4,
+            paragraph5,
+            paragraph6, image, url,body } = this.state
+            if (image == null || image.name === undefined) {
+            // alert('please add image')
+            this.setState({
+                errorImage: true
+            })
+        } else {
+        var newPostKey = firebase.database().ref().child('BlogData').push().key;
+        const uploadTask = firebase.storage().ref(`images/${image.name}`).put(image)
+            .then(snapshot => {
+                return snapshot.ref.getDownloadURL();   // Will return a promise with the download link
+            })
+
+            .then(downloadURL => {
+                console.log(`Successfully uploaded file and got download link - ${downloadURL}`);
+                // return downloadURL
+                this.setState({ url: downloadURL })
+                
+                    firebase
+                    .database()
+                    .ref("BlogData/" + newPostKey).set({
+                        heading,
+                        paragraph1,
+                        paragraph2,
+                        paragraph3,
+                        paragraph4,
+                        paragraph5,
+                        paragraph6, newPostKey, downloadURL,
+                        body,
+                        createAt: new Date().toLocaleString(),
+
+                    }).then((e) => {
+                        console.log('success', e)
+                        alert('succes')
+                    }).catch((error) => {
+                        console.log('Error: ', error)
+                        alert('Error')
+                    })
+                this.setState({
+                    heading: "",
+                    description: "",
+                    url: ""
+                });
+                
+            })
+            .catch(error => {
+                // Use to signal error if something goes wrong.
+                console.log(`Failed to upload file and get link - ${error}`);
+            })
+
+    }
+    }
+
+
+
+
+    delete = (asd) => {
+
+        let userRef = firebase.database().ref('BlogData/' + asd);
+        userRef.remove().then((e) => {
+            console.log('success', e)
+        }).catch(err => {
+            console.log('err', err)
+        })
+        console.log('key', asd)
+    }
+
+
+  // render posts from firebase
+  renderPosts() {
+    return _.map(this.state.posts, (post, key) => {
+      return (
+    // console.log(post)
+        <div key={key}>
+          <h2>{post.title}</h2>
+          <p>{renderHTML(post.body)}</p>
+        </div>
+      );
+    });
+  }
+
+
+
+
+
+    render() {
+
+
+
+        
+        const {arr,url, heading, paragraph1,
+            paragraph2,
+            paragraph3,
+            paragraph4,
+            paragraph5,
+            paragraph6, image, } = this.state
+        console.log('Array Data: ', arr.length)
+        console.log('Array Data: ', arr.heading)
+
+        return (
+
+            <div >
+                {/* <Navigations /> */}
+                <Sidebar />
+                {/* <Container> */}
+                    <div>
+                        <div id="wrapper" className="toggled">
+                            <div id="page-content-wrapper">
+                                <div className="container-fluid" style={{ marginTop: 65 }}>
+                                  
+                                    <div style={{ marginTop: "35" }} >
+                                   
+                                        <h1 className="text-center" style={{ color: 'rgb(118, 102, 223)', fontSize: 50, }}>
+                                            <Icon size={32} icon={fileTextO} /> Add Blogs
+                
+                        </h1>
+                        <ReactQuill value={this.state.body}
+              placeholder="Body"
+              onChange={this.onHandleChange} />
+                
+                                        <AvForm>
+                                        <Row>
+                                        <Col md="12" xs="12"> 
+                                          <FormGroup>
+                                               
+                                                <AvField type="email" label="Heading" value={heading} name="email" id="exampleEmail" placeholder="with a placeholder" onChange={this.handleChangeHeading.bind(this)}  />
+                                            </FormGroup></Col>
+                                        <Col md="6" xs="12">
+                                        <FormGroup>
+                                               
+                                                <AvField type="textarea" label="Paragraph - 1" value={paragraph1} name="text" id="exampleText" onChange={this.handleChangeParagraph1.bind(this)}  />
+                                            </FormGroup></Col>
+                                        <Col md="6" xs="12">
+                                        <FormGroup>
+                                               
+                                                <AvField type="textarea" label="Paragraph - 2" value={paragraph2} name="text" id="exampleText" onChange={this.handleChangeParagraph2.bind(this)}  />
+                                            </FormGroup></Col>
+                                        <Col md="6" xs="12">
+                                        <FormGroup>
+                                               
+                                                <AvField type="textarea" label="Paragraph - 3" value={paragraph3} name="text" id="exampleText" onChange={this.handleChangeParagraph3.bind(this)}  />
+                                            </FormGroup></Col>
+                                        <Col md="6" xs="12">
+                                        <FormGroup>
+                                               
+                                                <AvField type="textarea" label="Paragraph - 4" value={paragraph4} name="text" id="exampleText" onChange={this.handleChangeParagraph4.bind(this)}  />
+                                            </FormGroup></Col>
+                                        <Col md="6" xs="12">
+                                        <FormGroup>
+                                               
+                                                <AvField type="textarea" label="Paragraph - 5" value={paragraph5} name="text" id="exampleText" onChange={this.handleChangeParagraph5.bind(this)}  />
+                                            </FormGroup></Col>
+                                        <Col md="6" xs="12">
+                                        <FormGroup>
+                                               
+                                                <AvField type="textarea" label="Paragraph - 6" value={paragraph6} name="text" id="exampleText" onChange={this.handleChangeParagraph6.bind(this)}  />
+                                            </FormGroup></Col>
+        </Row>
+        <FormGroup>
+                                            <Label for="exampleCustomFileBrowser">Choose File</Label>
+                                            <CustomInput type="file" id="exampleCustomFileBrowser" name="customFile" label={image && image.name} onChange={this.handleChange} />
+                                            {image && image.name || this.state.errorImage ? (<FormText color="danger">
+                                            {image && image.name ? " " : "Please Add Image"}
+                                        </FormText>) : (
+                                                <FormText color="danger">
+
+                                                </FormText>
+                                            )}
+                                        </FormGroup>
+                                            <br />
+                                            <Button color="success" outline onClick={this.submit}>Submit </Button>
+                                        </AvForm>
+                                        <br />
+                                        <br />
+                                        <h1 className="text-center" style={{ color: 'rgb(118, 102, 223)', fontSize: 50, }}>
+                                            <Icon size={32} icon={fileTextO} /> Blogs
+                
+                        </h1>
+                                        <p>Total Number of Blogs: {arr.length}</p>
+                                       
+                               
+                                    {/* <div className='view-content'> */}
+                                    {this.renderPosts()}
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                       </div>
+                   </div>                                
+            </div >
+
+        )
+    }
+}
+
+
+
+
+
+
+
+AddBLogs.modules = {
+
+    toolbar: [
+        [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' },
+        { 'indent': '-1' }, { 'indent': '+1' }],
+        ['link', 'image', 'video'],
+        ['clean']
+    ],
+    clipboard: {
+        // toggle to add extra line breaks when pasting HTML:
+        matchVisual: false,
+    },
+    // theme: 'snow',
+
+}
+/* 
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+AddBLogs.formats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image', 'video'
+]
+
+/*
+ * PropType validation
+ */
+//   Editor.propTypes = {
+//     placeholder: PropTypes.string,
+//   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// {
+//     _.map(this.state.arr, (post, key) => {
+//         return (
+//             <div key={key}>
+//             <h2>{post.title}</h2>
+//             <p>{renderHTML(post.body)}</p>
+//           </div>
+
+         
+
+    //    < Col md='6' sm="12" style={{ marginBottom: '30px' }} key={i} id={i} >
+    //         <Card key={i} id={e.newPostKey} className='bor'>
+    //         <Link to={`/AddblogsDetails/${e.newPostKey}`} class="smallLinkButton">
+    //                 <CardImg top src={e.downloadURL || "https://via.placeholder.com/400x300"}
+    //                     alt="Uploaded Images" height="200"
+    //                     width="300" />
+    //                 <Card body>
+    //                     <div className='filterbox' style={{textDecoration:'none', color:'rgb(118, 102, 223)'}}>
+    //                         <h3> {e.heading}</h3>
+    //                     </div>
+    //                     <div className='filterbox' >
+    //                         <CardText className="custom-link"><ReadMoreReact text={e.paragraph1}
+    //                             min={50}
+    //                             ideal={50}
+    //                             max={100}
+    //                             readMoreText="read more" /></CardText>
+    //                     </div>
+                        
+    //                 </Card>
+    //             </Link>
+    //             <div style={{display: 'flex', justifyContent: 'flex-end', margin: 5}}>
+    //             <Link to={`/Editblog/${e.newPostKey}`} class="smallLinkButton" style={{color: 'white', marginRight: 5}}>   <Button   color="primary" size="md" outline>Edit</Button></Link>
+    //             <Button color="danger" size="md" outline   onClick={() => this.delete(e.newPostKey)} >Delete</Button>
+    //                     </div>
+    //         </Card>
+    //     </Col>
+       
+//         )
+//     })
+// }
+// </div>)}
