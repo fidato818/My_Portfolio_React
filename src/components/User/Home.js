@@ -242,7 +242,7 @@ class Home extends Component {
                                                     <div class="modal-body">
                                                         <img src={imagePage} class="img-thumbnail" alt="Responsive image"></img>
                                                         <p>Description:  {ReactHtmlParser(html)}</p>
-                                                        <Button className="float-right" href={buttonLink} target="_blank" color="primary" outline block><img src="/assets/img/bootstrap.svg" alt="" width="32" height="32" title="Bootstrap" />View</Button>
+                                                        <Button className="float-right" href={buttonLink} target="_blank" color="primary" outline block>View</Button>
                                                     </div>
                                                     <div class="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                         <a href={githubLink} target="_blank">
