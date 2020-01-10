@@ -9,7 +9,7 @@ import loading from '../../images/24.gif';
 import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.css';
 import logo from '../../images/logo.jpg';
-import myPhoto from '../../images/white background.jfif';
+import myPhoto from '../../images/white_background.jpg';
 import githubLogo from '../../images/github-p-500.png'
 import { Icon, } from 'react-icons-kit'
 import { facebookOfficial } from 'react-icons-kit/fa/facebookOfficial'
