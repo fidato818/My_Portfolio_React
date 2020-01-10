@@ -9,7 +9,7 @@ import loading from '../../images/24.gif';
 import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.css';
 import logo from '../../images/logo.jpg';
-import myPhoto from '../../images/white_background.jpg';
+import myPhoto from '../../images/white_background.JPG';
 import githubLogo from '../../images/github-p-500.png'
 import { Icon, } from 'react-icons-kit'
 import { facebookOfficial } from 'react-icons-kit/fa/facebookOfficial'
@@ -242,7 +242,8 @@ class Home extends Component {
                                                     <div class="modal-body">
                                                         <img src={imagePage} class="img-thumbnail" alt="Responsive image"></img>
                                                         <p>Description:  {ReactHtmlParser(html)}</p>
-                                                        <Button className="float-right" href={buttonLink} target="_blank" color="primary" outline block>View</Button>
+                                                        <a href={buttonLink} target="_blank" type="button" class="btn btn-outline-primary btn-block">View</a>
+                                                        <br/>
                                                     </div>
                                                     <div class="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                         <a href={githubLink} target="_blank">
