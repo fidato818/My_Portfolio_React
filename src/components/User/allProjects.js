@@ -244,7 +244,8 @@ class Books extends Component {
                                                                 <p>Description:  {ReactHtmlParser(html)}</p>
                                                                 <span style={{ display: 'none' }}>{category}
                                                                 </span>
-                                                                <Button className="float-right" href={buttonLink} target="_blank" color="primary" outline block>View</Button>
+                                                                <a href={buttonLink} target="_blank" type="button" class="btn btn-outline-primary btn-block" >View</a>
+                                                                <br/>
                                                             </div>
                                                             <div class="modal-footer" style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                                 <a href={githubLink} target="_blank">
