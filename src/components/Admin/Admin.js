@@ -172,7 +172,7 @@ class Admin extends Component {
                                     justifyContent: 'center',
                                     alignItems: 'center',
                                 }}>
-                                    {!blogs.length && !books.length && !download.length ? (
+                                    {!download.length ? (
                                         <div
                                             style={{
                                                 position: "absolute",
